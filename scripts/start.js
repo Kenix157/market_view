@@ -1,14 +1,23 @@
-'use strict';
-var path = require('path');
-var express = require('express');
+var path = require("path");
+var express = require("express");
+var fs = require('fs');
+if (!fs.existsSync("build")) {
+	console.log("build dir is not found");
+	console.log("run npm build cmd");
+   return;
+}
 
+var DIST_DIR = path.join( path.join(__dirname, '../'), "build");
+var PORT = 3000;
 var app = express();
 
-var staticPath = path.join(__dirname, '/');
-app.use(express.static(staticPath));
+//Serving the files on the dist folder
+app.use(express.static(DIST_DIR));
 
-app.set('port', process.env.PORT || 3000);
-
-var server = app.listen(app.get('port'), function() {
-    console.log('listening MarketView on port 3000');
+//Send index.html when the user access the web
+app.get("*", function (req, res) {
+  res.sendFile(path.join(DIST_DIR, "index.html"));
 });
+
+app.listen(PORT);
+console.log( "listening on port = " + PORT );
